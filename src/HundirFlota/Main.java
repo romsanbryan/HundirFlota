@@ -11,67 +11,92 @@ package HundirFlota;
 
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
+
 public class Main {
 
 	public static void main(String[] args) {
 		Juego b = new Juego();
 		Scanner sc = new Scanner(System.in);
 		boolean salir = false;
-		int opcion;
+		String cadenaY;
+		int numeroX;
   
-   
+		String instrucciones ="Hundir la flota:\n"
+				+ " El juego consiste en destruir los barcos generados automáticamente.\n"
+				+ "Si los consigues destruir los 3 barcos en 6 intentos habras ganado.\n"
+				+ "Cada barco esta ubicado en una única celda y solo podra ser tocado (a diferencia del juego"
+				+ "real que existe el hundido cuando se le toca varias veces el barco).\n"
+				+ "Si das \"agua\" es un disparo fallado, si das \"tocado\", es diparo acertado.";
+		JOptionPane.showMessageDialog(null, instrucciones.toString(), "Hundir la flota", JOptionPane.INFORMATION_MESSAGE);
+		
 		while (!salir) {
-			System.out.println("1. Jugar");
-			System.out.println("2. Salir");
-			System.out.print("Escribe una de las opciones: ");
-			opcion = sc.nextInt();
-			System.out.println();
+			String opcion = JOptionPane.showInputDialog (null, "1.- Jugar\n2.- Salir", "Hundir la flota. Menu", JOptionPane.INFORMATION_MESSAGE);
 
-
-			switch (opcion) {
-				case 1:
-					b.ubicacion();
-
+			if (opcion.equals("1")) {
+		b.contador=0;
+b.barcos=3;
+b.ubicacion();
+					
+	//				System.out.println(b.barco1 + " "+b.barco2 + " "+b.barco3);
 					for (b.ronda = 0; b.ronda < 6; b.ronda++) {
-						System.out.println("\n"+"Ronda: "+(b.ronda+1));
-						System.out.print("Introducir coordenads [A-F]:");
-						b.setY(sc.next());
-            	   
-						if (b.getY() == -1){
-							break;
-						}
+					
+						do {
+							cadenaY = JOptionPane.showInputDialog (null, "Ronda: "+(b.ronda+1) + "\nCoordenadas X para disparo [A-F]: ","Hundir la flota", JOptionPane.QUESTION_MESSAGE);		
+							b.setY(cadenaY);
+							
+							if (b.getY() == -1){
+								JOptionPane.showMessageDialog(null, "Fuera del rango".toString(),"Hundir la flota",JOptionPane.ERROR_MESSAGE);
+							}
+						} while (b.getY() == -1);
 
-						System.out.print("Introducir coordenads [1-6]:");
-						b.setX(sc.nextInt());
-						if (b.getX() == -1) {
-							break;
-						}
-            	  
-						b.compruebaHistorial();
+						do {
+							numeroX = Integer.parseInt(JOptionPane.showInputDialog(null,"Introducir coordenadas Y para disparo [1-6]:","Hundir la flota", JOptionPane.QUESTION_MESSAGE));
 
-						System.out.println(b.comprueba());
+							b.setX(numeroX);
+							if (b.getX() == -1) {
+								JOptionPane.showMessageDialog(null, "Fuera del rango".toString(),"Hundir la flota",JOptionPane.ERROR_MESSAGE);
+							}
+						} while (b.getX() == -1);
+
+
+						String comprueba =  b.compruebaHistorial() + b.comprueba();
+						
+						if(b.comprueba().equals("Tocado")) b.barcos--;
+						
+						if(b.barcos>0)
+							JOptionPane.showMessageDialog(null, comprueba.toString()+"\nQuedan: "+b.barcos+"/3 barcos","Resultado", JOptionPane.INFORMATION_MESSAGE);
+						else 
+							JOptionPane.showMessageDialog(null, comprueba.toString()+"\nÚltimo barco destruido","Resultado", JOptionPane.INFORMATION_MESSAGE);
+
 						b.historial();
 
 						if(b.contador==3){
-							System.out.println("Flota hundida");
+							b.ventana();	
+
 							break;
 						}
+						
+
 					}
-					
+
+					if (b.ronda == 6) {
+						b.ventana();	
+					}
 					System.out.println();
-					if (b.ronda > 0)
-						b.ventana();
-					System.out.println("\n");
+					b.informe.clear();
 					b.ch.clear();
-					break;
-					
-				case 2:
-					salir = true;
-					System.out.println("Fin del juego\n");
-					break;
-				default:
-					System.out.println("Solo opciones 1 y 2\n");
+					System.out.println("\n");
 			}
+
+			else if (opcion.equals("2")){
+					salir = true;
+					JOptionPane.showMessageDialog(null, "Fin del juego".toString(),"Hundir la flota", JOptionPane.INFORMATION_MESSAGE);
+					break;
+			}
+			else
+				JOptionPane.showMessageDialog(null, "Solo opciones 1 y 2\n".toString(),"Hundir la flota", JOptionPane.INFORMATION_MESSAGE);			
 		}
 		sc.close();
 		}

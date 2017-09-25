@@ -18,7 +18,8 @@ public class Juego {
 	ArrayList<String> ch = new ArrayList<String>(); // Array utilizado para comprobar la existencia de coordenadas dichas por el usuario para no ser repetidas
 	int contador, ronda; // Utilizados para salidas del programa
 	String barco1, barco2, barco3; // Barcos que se generan el el tablero de forma aleatoria
-	int x, y; // Coordenadas del usuario 
+	int x, y;
+	int barcos; // Coordenadas del usuario 
 
 	/*
 	 * Metodo que asigna de manera aletatoria la posicion de los 3 barcos. Cuenta con dos estructuras repetitivas que permite que si se generan dos barcos en misma posicion
@@ -37,13 +38,18 @@ public class Juego {
 			int x2 = r.nextInt(6);
 			int y2 = r.nextInt(6);
 			barco2 = j.tablero[x2][y2];
-		} while (!barco1.equals(barco2));
+			
+			
+		} while (barco1.equals(barco2));
+		
 		
 		do {
+			
 			int x3 = r.nextInt(6);
 			int y3 = r.nextInt(6);
-			barco3 = j.tablero[x3][y3];
-		} while(!barco1.equals(barco3) && !barco2.equals(barco3));
+			
+			barco3 = j.tablero[x3][y3];	
+		} while(barco1.equals(barco3) || barco2.equals(barco3));
 	}
 	
 	/*
@@ -102,15 +108,21 @@ public class Juego {
 	 * 
 	 * @param cadena String que recoge la posicion de tablero dicha por el usuario para que la pueda comparar
 	 */
-	public void compruebaHistorial(){
+	public String compruebaHistorial(){
 		String cadena = j.tablero[this.getX()][this.getY()];
-		if(!ch.contains(cadena))
+		if(!ch.contains(cadena)) {
 						ch.add(cadena);
+						return " ";
+						}
 		else {
-			System.out.print ("Coordenada ya dicha: ");
 			ronda--;
-			if (this.comprueba().equals("Tocado")) 
-			contador--;
+			if (this.comprueba().equals("Tocado")) {
+				contador--;
+				barcos--;
+
+			}
+			return "Coordenada ya dicha: ";
+
 		}
 	}
 	
@@ -124,10 +136,15 @@ public class Juego {
 	public void ventana() {
 		ArrayList<String> informe2 = new ArrayList<String>();
 		for (String inf : informe) {
-			  String returnValue = "\n"+inf.toString();
+			  String returnValue ="\n"+inf.toString();
+			  
 			  informe2.add(returnValue);
 		}
-		JOptionPane.showMessageDialog(null, informe2.toString());
+		if(contador==3) 
+				JOptionPane.showMessageDialog(null, "Flota hundida. Has ganado\n"+informe2.toString().replace("[", " ").replace("]"," "), "Informe", JOptionPane.INFORMATION_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(null, "Flota NO hundida. Has perdido\n"+informe2.toString().replace("[", " ").replace("]"," "), "Informe", JOptionPane.INFORMATION_MESSAGE);
+
 	}
 	
 	/*
